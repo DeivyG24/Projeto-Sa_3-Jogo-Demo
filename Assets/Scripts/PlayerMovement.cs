@@ -182,6 +182,9 @@ public class PlayerMovement : MonoBehaviour
         if (rb.linearVelocity.y < 0)
         {
             rb.linearVelocity += Vector3.up * Physics.gravity.y * (gravityMultiplier - 1) * Time.deltaTime;
+
+            // EMPURRA LEVEMENTE PRA BAIXO
+            rb.AddForce(Vector3.down * 5f);
         }
     }
 

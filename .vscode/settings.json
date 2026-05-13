@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Projeto-Sa_3-Jogo-Demo.slnx"
+    "dotnet.defaultSolution": "Projeto Sa_3 Jogo Demo.slnx"
 }
