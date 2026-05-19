@@ -568,8 +568,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 641b1f79ae7fef340bcd159b6b6c4f26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MouseLook
-  mouseSensitivity: 50
+  mouseSensitivity: 5
   playerBody: {fileID: 791014241}
+  sensitivitySlider: {fileID: 0}
   smoothTime: 0.05
 --- !u!1 &336394460
 GameObject:

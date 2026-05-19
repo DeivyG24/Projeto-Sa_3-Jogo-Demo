@@ -890,6 +890,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseLook
   mouseSensitivity: 0.3
   playerBody: {fileID: 791014241}
+  sensitivitySlider: {fileID: 2085063003}
   smoothTime: 0.05
 --- !u!1 &336394460
 GameObject:
@@ -936,7 +937,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 388684616}
-  - component: {fileID: 388684615}
   m_Layer: 0
   m_Name: SettingsManager
   m_TagString: Untagged
@@ -944,20 +944,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &388684615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 388684614}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2d511abcd51fa940b9738d8fa989022, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SettingsManager
-  sensitivitySlider: {fileID: 2085063003}
-  mouseLook: {fileID: 0}
 --- !u!4 &388684616
 Transform:
   m_ObjectHideFlags: 0

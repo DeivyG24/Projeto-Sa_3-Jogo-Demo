@@ -1,12 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MouseLook : MonoBehaviour
 {
     [Header("Sensitivity")]
-    public float mouseSensitivity = 0.3f;
+    public float mouseSensitivity = 2f;
 
     [Header("Player")]
     public Transform playerBody;
+
+    [Header("UI")]
+    public Slider sensitivitySlider;
 
     float xRotation = 0f;
 
@@ -23,6 +27,17 @@ public class MouseLook : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // CONFIGURA SLIDER
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.minValue = 0.5f;
+            sensitivitySlider.maxValue = 10f;
+
+            sensitivitySlider.value = mouseSensitivity;
+
+            sensitivitySlider.onValueChanged.AddListener(SetSensitivity);
+        }
     }
 
     void LateUpdate()
@@ -30,20 +45,16 @@ public class MouseLook : MonoBehaviour
         if (Time.timeScale == 0f)
             return;
 
-        // INPUT CRU
+        // INPUT
         float mouseX =
             Input.GetAxisRaw("Mouse X") *
-            mouseSensitivity *
-            100f *
-            Time.deltaTime;
+            mouseSensitivity;
 
         float mouseY =
             Input.GetAxisRaw("Mouse Y") *
-            mouseSensitivity *
-            100f *
-            Time.deltaTime;
+            mouseSensitivity;
 
-        // SUAVIZA
+        // SMOOTH
         currentMouseX = Mathf.SmoothDamp(
             currentMouseX,
             mouseX,
@@ -67,5 +78,11 @@ public class MouseLook : MonoBehaviour
 
         // HORIZONTAL
         playerBody.Rotate(Vector3.up * currentMouseX);
+    }
+
+    // MUDA SENSIBILIDADE
+    public void SetSensitivity(float value)
+    {
+        mouseSensitivity = value;
     }
 }
