@@ -735,9 +735,8 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  - component: {fileID: 330585548}
-  - component: {fileID: 330585550}
   - component: {fileID: 330585551}
+  - component: {fileID: 330585552}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -864,39 +863,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &330585548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 641b1f79ae7fef340bcd159b6b6c4f26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MouseLook
-  mouseSensitivity: 80
-  playerBody: {fileID: 791014241}
---- !u!114 &330585550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f63e3bd2fa760a43bf0d95df3e3da5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraWallFix
-  mouseSensitivity: 2
-  radius: 0.2
-  distance: 0.3
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 1
-  playerBody: {fileID: 791014241}
 --- !u!114 &330585551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -910,6 +876,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Flashlight
   flashlight: {fileID: 1267846585}
+--- !u!114 &330585552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641b1f79ae7fef340bcd159b6b6c4f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MouseLook
+  mouseSensitivity: 0.3
+  playerBody: {fileID: 791014241}
+  smoothTime: 0.05
 --- !u!1 &336394460
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +957,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsManager
   sensitivitySlider: {fileID: 2085063003}
-  mouseLook: {fileID: 330585550}
+  mouseLook: {fileID: 0}
 --- !u!4 &388684616
 Transform:
   m_ObjectHideFlags: 0
@@ -2233,6 +2214,7 @@ MonoBehaviour:
   crouchSmooth: 10
   bobSpeed: 12
   bobAmount: 0.05
+  groundCheckDistance: 0.3
   maxHealth: 100
 --- !u!54 &791014237
 Rigidbody:

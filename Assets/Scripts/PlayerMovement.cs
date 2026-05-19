@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI; // 🔥 ADICIONADO
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     public float staminaDrain = 1.8f;
     public float staminaRecovery = 1.2f;
 
-    public Slider staminaSlider; // 🔥 ADICIONADO
+    public Slider staminaSlider;
 
     [Header("Camera")]
     public Transform cameraTransform;
@@ -34,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Head Bob")]
     public float bobSpeed = 16f;
     public float bobAmount = 0.1f;
+
+    [Header("Ground Check")]
+    public float groundCheckDistance = 0.3f;
 
     [Header("Health")]
     public int maxHealth = 100;
@@ -62,7 +65,6 @@ public class PlayerMovement : MonoBehaviour
         currentHealth = maxHealth;
         currentCamY = normalCamY;
 
-        // 🔥 ADICIONADO
         if (staminaSlider != null)
         {
             staminaSlider.maxValue = maxStamina;
@@ -72,6 +74,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // GROUND CHECK PROFISSIONAL
+        isGrounded = Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            col.bounds.extents.y + groundCheckDistance
+        );
+
+        // INPUT
         float x = 0;
         float z = 0;
 
@@ -91,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = forward * z + right * x;
 
+        // COYOTE TIME
         if (isGrounded)
             coyoteTimer = coyoteTime;
         else
@@ -101,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
         bool isRunning = Keyboard.current.leftShiftKey.isPressed && stamina > 0;
         bool isCrouching = Keyboard.current.leftCtrlKey.isPressed;
 
+        // STAMINA
         if (isRunning)
         {
             speed = sprintSpeed;
@@ -113,12 +125,13 @@ public class PlayerMovement : MonoBehaviour
 
         stamina = Mathf.Clamp(stamina, 0, maxStamina);
 
-        // 🔥 ATUALIZA UI
+        // UI STAMINA
         if (staminaSlider != null)
         {
             staminaSlider.value = stamina;
         }
 
+        // SLIDE
         if (isRunning && isCrouching && isGrounded)
         {
             if (!isSliding)
@@ -126,7 +139,9 @@ public class PlayerMovement : MonoBehaviour
                 isSliding = true;
                 slideTimer = slideTime;
 
-                Vector3 slideDir = move.magnitude > 0 ? move.normalized : transform.forward;
+                Vector3 slideDir = move.magnitude > 0
+                    ? move.normalized
+                    : transform.forward;
 
                 rb.linearVelocity = new Vector3(
                     slideDir.x * slideForce,
@@ -136,6 +151,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        // TIMER DO SLIDE
         if (isSliding)
         {
             slideTimer -= Time.deltaTime;
@@ -146,15 +162,26 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        float targetCamY = isCrouching ? crouchCamY : normalCamY;
-        currentCamY = Mathf.Lerp(currentCamY, targetCamY, crouchSmooth * Time.deltaTime);
+        // CROUCH CAMERA
+        float targetCamY = isCrouching
+            ? crouchCamY
+            : normalCamY;
+
+        currentCamY = Mathf.Lerp(
+            currentCamY,
+            targetCamY,
+            crouchSmooth * Time.deltaTime
+        );
 
         Vector3 camPos = cameraTransform.localPosition;
         camPos.y = currentCamY;
 
+        // HEAD BOB
         if (move.magnitude > 0.1f && isGrounded)
         {
-            bobTimer += Time.deltaTime * (isRunning ? bobSpeed * 1.5f : bobSpeed);
+            bobTimer += Time.deltaTime *
+                (isRunning ? bobSpeed * 1.5f : bobSpeed);
+
             camPos.y += Mathf.Sin(bobTimer) * bobAmount;
         }
         else
@@ -164,42 +191,52 @@ public class PlayerMovement : MonoBehaviour
 
         cameraTransform.localPosition = camPos;
 
+        // CROUCH SPEED
         if (isCrouching && !isSliding)
             speed = crouchSpeed;
 
+        // MOVIMENTO
         if (!isSliding)
         {
             Vector3 velocity = move * speed;
-            rb.linearVelocity = new Vector3(velocity.x, rb.linearVelocity.y, velocity.z);
+
+            rb.linearVelocity = new Vector3(
+                velocity.x,
+                rb.linearVelocity.y,
+                velocity.z
+            );
         }
 
+        // PULO
         if (Keyboard.current.spaceKey.wasPressedThisFrame && coyoteTimer > 0)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.linearVelocity = new Vector3(
+                rb.linearVelocity.x,
+                0f,
+                rb.linearVelocity.z
+            );
+
+            rb.AddForce(
+                Vector3.up * jumpForce,
+                ForceMode.Impulse
+            );
         }
 
+        // GRAVIDADE MELHORADA
         if (rb.linearVelocity.y < 0)
         {
-            rb.linearVelocity += Vector3.up * Physics.gravity.y * (gravityMultiplier - 1) * Time.deltaTime;
+            rb.linearVelocity +=
+                Vector3.up *
+                Physics.gravity.y *
+                (gravityMultiplier - 1) *
+                Time.deltaTime;
 
-            // EMPURRA LEVEMENTE PRA BAIXO
+            // AJUDA A NÃO GRUDAR EM PAREDE
             rb.AddForce(Vector3.down * 5f);
         }
     }
 
-    void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-            isGrounded = true;
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-            isGrounded = false;
-    }
-
+    // VIDA
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;

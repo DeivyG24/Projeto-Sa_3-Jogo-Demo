@@ -1,12 +1,23 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class MouseLook : MonoBehaviour
 {
-    public float mouseSensitivity = 50f;
+    [Header("Sensitivity")]
+    public float mouseSensitivity = 0.3f;
+
+    [Header("Player")]
     public Transform playerBody;
 
     float xRotation = 0f;
+
+    // SMOOTH
+    float smoothX;
+    float smoothY;
+
+    float currentMouseX;
+    float currentMouseY;
+
+    public float smoothTime = 0.05f;
 
     void Start()
     {
@@ -14,15 +25,47 @@ public class MouseLook : MonoBehaviour
         Cursor.visible = false;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        float mouseX = Mouse.current.delta.ReadValue().x * mouseSensitivity * Time.deltaTime;
-        float mouseY = Mouse.current.delta.ReadValue().y * mouseSensitivity * Time.deltaTime;
+        if (Time.timeScale == 0f)
+            return;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -40f, 28f);
+        // INPUT CRU
+        float mouseX =
+            Input.GetAxisRaw("Mouse X") *
+            mouseSensitivity *
+            100f *
+            Time.deltaTime;
 
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        playerBody.Rotate(Vector3.up * mouseX);
+        float mouseY =
+            Input.GetAxisRaw("Mouse Y") *
+            mouseSensitivity *
+            100f *
+            Time.deltaTime;
+
+        // SUAVIZA
+        currentMouseX = Mathf.SmoothDamp(
+            currentMouseX,
+            mouseX,
+            ref smoothX,
+            smoothTime
+        );
+
+        currentMouseY = Mathf.SmoothDamp(
+            currentMouseY,
+            mouseY,
+            ref smoothY,
+            smoothTime
+        );
+
+        // VERTICAL
+        xRotation -= currentMouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        transform.localRotation =
+            Quaternion.Euler(xRotation, 0f, 0f);
+
+        // HORIZONTAL
+        playerBody.Rotate(Vector3.up * currentMouseX);
     }
 }

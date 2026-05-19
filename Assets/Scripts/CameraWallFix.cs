@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraWallFix : MonoBehaviour
 {
     [Header("Mouse Sensitivity")]
-    public float mouseSensitivity = 2f;
+    public float mouseSensitivity = 0.3f;
 
     [Header("Wall Fix")]
     public float radius = 0.2f;
@@ -15,7 +15,9 @@ public class CameraWallFix : MonoBehaviour
 
     private Vector3 originalLocalPos;
 
-    float xRotation = 0f;
+    private float xRotation = 0f;
+
+    private Vector3 currentVelocity;
 
     void Start()
     {
@@ -25,42 +27,56 @@ public class CameraWallFix : MonoBehaviour
         Cursor.visible = false;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        // NÃO MOVE A CÂMERA NO PAUSE
+        // PAUSE
         if (Time.timeScale == 0f)
             return;
 
-        // MOVIMENTO DO MOUSE
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        // MOUSE INPUT
+        float mouseX =
+            Input.GetAxisRaw("Mouse X") *
+            mouseSensitivity *
+            100f *
+            Time.deltaTime;
+
+        float mouseY =
+            Input.GetAxisRaw("Mouse Y") *
+            mouseSensitivity *
+            100f *
+            Time.deltaTime;
 
         // ROTAÇÃO VERTICAL
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.localRotation =
+            Quaternion.Euler(xRotation, 0f, 0f);
 
         // ROTAÇÃO HORIZONTAL
         playerBody.Rotate(Vector3.up * mouseX);
-    }
 
-    void LateUpdate()
-    {
+        // WALL FIX
         Vector3 origin = transform.parent.position;
         Vector3 direction = transform.forward;
 
         RaycastHit hit;
 
-        // PEGA ALTURA ATUAL (IMPORTANTE PRO CROUCH)
         float currentY = transform.localPosition.y;
 
-        // DETECTA PAREDE
-        if (Physics.SphereCast(origin, radius, direction, out hit, distance, wallMask))
+        Vector3 targetPos;
+
+        if (Physics.SphereCast(
+            origin,
+            radius,
+            direction,
+            out hit,
+            distance,
+            wallMask))
         {
             float pushBack = distance - hit.distance;
 
-            transform.localPosition = new Vector3(
+            targetPos = new Vector3(
                 originalLocalPos.x,
                 currentY,
                 originalLocalPos.z - pushBack
@@ -68,11 +84,19 @@ public class CameraWallFix : MonoBehaviour
         }
         else
         {
-            transform.localPosition = new Vector3(
+            targetPos = new Vector3(
                 originalLocalPos.x,
                 currentY,
                 originalLocalPos.z
             );
         }
+
+        // SUAVIZA
+        transform.localPosition = Vector3.SmoothDamp(
+            transform.localPosition,
+            targetPos,
+            ref currentVelocity,
+            0.03f
+        );
     }
 }
